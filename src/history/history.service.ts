@@ -1,26 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { CreateHistoryDto } from './dto/create-history.dto';
-import { UpdateHistoryDto } from './dto/update-history.dto';
+import { InjectModel } from '@nestjs/mongoose/dist/common/mongoose.decorators';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class HistoryService {
+  constructor(
+    @InjectModel('History') private readonly historyModel: Model<History>,
+  ) {}
   create(createHistoryDto: CreateHistoryDto) {
-    return 'This action adds a new history';
+    const createdHistory = new this.historyModel(createHistoryDto);
+    return createdHistory.save();
   }
 
-  findAll() {
-    return `This action returns all history`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} history`;
-  }
-
-  update(id: number, updateHistoryDto: UpdateHistoryDto) {
-    return `This action updates a #${id} history`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} history`;
+  getHistory(limit: number, ip: string) {
+    return this.historyModel
+      .find({ ip })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .exec();
   }
 }

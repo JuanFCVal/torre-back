@@ -1,1 +1,4 @@
-export class CreateHistoryDto {}
+export class CreateHistoryDto {
+  ip: string;
+  query: string;
+}
